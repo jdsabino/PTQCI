@@ -65,3 +65,7 @@ classdef SinglePhotonCounter
     end
 end
 
+% TODO
+% - Check how to detect multiple photons
+% - Improve method for several detections (remove for loop)
+% - Discuss what else is needed for the simulation
