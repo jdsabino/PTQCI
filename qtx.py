@@ -15,14 +15,14 @@ Nevents = int(sim_time/src_clock)
 
 # Source definitions
 # ###--- Laser intensities (average number of phtons per pulse)
-muS = 0.6
-muD = 0.1
-muV = 0.005
+muS = 0.6   # Mean photon number used for key generation
+muD = 0.1   # Mean photon number for decoy states
+muV = 0.005 # Mean photon number for vacuum states
 
 mus = np.array([muS, muD, muV])
 
 # ###--- Probability of signal, decoy and vacuum states
-pD = 0.1
+pD = 0.1            
 pV = 0.005
 pS = 1 - pD - pV
 
