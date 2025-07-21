@@ -40,13 +40,14 @@ intensities = np.random.uniform(size=Nevents)
 
 
 #--- New way - The 'dist_random_values' way:
-intensities = dist_random_values(Nevents, mus, probs)
-unique, counts = np.unique(intensities, return_counts=True)
-val_cnt = np.array([len(intensities[intensities == mu]) for mu in mus])
+intensities = dist_random_values(Nevents, mus, probs) # This is a vector which has the mu values distributed accorignly to the probabilities 'probs'
+unique, counts = np.unique(intensities, return_counts=True) 
+val_cnt = np.array([len(intensities[intensities == mu]) for mu in mus]) # Here we create an array with how many values for each mu we have
 
 ###--- Generate the coherent states
 dim = 6 # Fock state dimnsion
 
+#--- Old way (ignore)
 # # Vaccum Coherent State
 # alpha = np.sqrt(muV) # alpha could be complex but I'm keeping it simple for now
 # stateV = qtp.coherent(dim, alpha)
@@ -63,20 +64,25 @@ dim = 6 # Fock state dimnsion
 ###--- Compute how many photons we will have on each instant
 """
 For this, I will check how many times we have to measure each coherent state
-(that is how many light pulses with different mus we have) abd measure the
+(that is how many light pulses with different mus we have) and measure the
 coherent states that many times. This will give us the amount of photons for each pulse.
 """
 
+# Generate the measurement operators
 measurement_ops = [qtp.ket2dm(qtp.basis(dim, _)) for _ in range(dim)]
 
+# Make list with the coherent states and get the probabilities of finding n photons for each of them
 alpha = np.array([qtp.coherent(dim, mu) for mu in  mus])
 measure_probs = [qtp.measurement.measurement_statistics_povm(state, measurement_ops)[1] for state in alpha]
 
 # stats = [np.array(list(zip(range(dim), measure))) for measure in measure_probs]
 
+# Measure the states and get how many photons you find in each pulse
 #val_cnt = np.array([len(intensities[intensities == mu]) for mu in mus])
 results = [dist_random_values(val_cnt[idx], np.arange(dim), np.array(measure_probs[idx])) for idx in range(len(measure_probs))]
 
+
+# store how many photons are created for each pulse
 nphotons = np.zeros(intensities.shape)
 
 for idx, res in enumerate(results):
@@ -89,7 +95,6 @@ polH = np.array([[1], [0]])#qtp.basis(2, 0)
 polV = np.array([[0], [1]])#qtp.basis(2, 1)
 
 def gen_pol_state(basis, pol):
-
     return (1-basis)*((1-pol)*polH + pol*polV) + basis*((1-pol)*(polH+polV) + pol*(polH - polV))/np.sqrt(2)
 
 random_photons = np.concatenate((basis_pol.reshape(Nevents,1), pols.reshape(Nevents,1)), axis=1)
